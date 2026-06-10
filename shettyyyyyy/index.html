@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Shettyyyyyyyy! 🎂</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --egg-yellow: #FFD700;
+      --kinder-red: #E8263A;
+      --kinder-brown: #7B3F00;
+      --cream: #FFF8E7;
+      --pink: #FF6EB4;
+      --lilac: #C9A0E8;
+      --white: #FFFFFF;
+      --text-dark: #2D1B00;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Nunito',sans-serif; background:var(--cream); overflow-x:hidden; min-height:100vh; }
+
+    /* CONFETTI */
+    .confetti-container { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
+    .confetti { position:absolute; width:10px; height:10px; border-radius:50%; animation:fall linear infinite; opacity:0.7; }
+    @keyframes fall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(110vh) rotate(720deg);opacity:0} }
+
+    /* SCREENS */
+    .screen { display:none; min-height:100vh; position:relative; z-index:1; flex-direction:column; align-items:center; justify-content:center; padding:2rem 1.5rem; text-align:center; animation:fadeIn 0.6s ease; }
+    .screen.active { display:flex; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+    /* SCREEN 1 – INTRO */
+    #screen-intro { background:linear-gradient(135deg,#FFD700 0%,#FF6EB4 50%,#C9A0E8 100%); }
+    .egg-wrapper { position:relative; width:180px; height:210px; margin:0 auto 2rem; cursor:pointer; }
+    .egg { width:180px; height:210px; background:linear-gradient(160deg,#fff8e1 0%,#ffe082 60%,#ffca28 100%); border-radius:50% 50% 50% 50%/60% 60% 40% 40%; box-shadow:0 8px 32px rgba(0,0,0,.2),inset -8px -8px 20px rgba(0,0,0,.08); animation:eggBob 2s ease-in-out infinite; display:flex; align-items:center; justify-content:center; font-size:3.5rem; position:relative; overflow:hidden; }
+    .egg::before { content:''; position:absolute; top:20%; left:20%; width:30%; height:20%; background:rgba(255,255,255,.5); border-radius:50%; transform:rotate(-30deg); }
+    .kinder-band { position:absolute; top:50%; left:0; right:0; height:36px; background:var(--kinder-red); transform:translateY(-50%); display:flex; align-items:center; justify-content:center; font-family:'Pacifico',cursive; font-size:1rem; color:white; letter-spacing:2px; }
+    @keyframes eggBob { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-12px) rotate(2deg)} }
+    .tap-hint { font-size:.9rem; color:rgba(255,255,255,.9); margin-top:.5rem; animation:pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .intro-title { font-family:'Pacifico',cursive; font-size:clamp(2rem,6vw,3.5rem); color:white; text-shadow:3px 3px 0 rgba(0,0,0,.15); margin-bottom:.5rem; }
+    .intro-sub { font-size:1.1rem; color:rgba(255,255,255,.95); font-weight:700; margin-bottom:2rem; }
+
+    /* QUIZ SCREEN */
+    #screen-quiz { background:linear-gradient(160deg,#fff8e1 0%,#fce4ec 100%); }
+    .quiz-card { background:white; border-radius:24px; padding:2.5rem 2rem; max-width:500px; width:100%; box-shadow:0 12px 40px rgba(0,0,0,.12); }
+    .quiz-header { font-size:.85rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--kinder-red); margin-bottom:.5rem; }
+    .quiz-emoji { font-size:3rem; margin-bottom:1rem; }
+    .quiz-question { font-size:clamp(1.2rem,3.5vw,1.5rem); font-weight:900; color:var(--text-dark); margin-bottom:1.8rem; line-height:1.4; }
+    .quiz-options { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+    .option-btn { background:var(--cream); border:3px solid #e0d0b0; border-radius:16px; padding:.9rem .7rem; font-family:'Nunito',sans-serif; font-size:.95rem; font-weight:700; color:var(--text-dark); cursor:pointer; transition:all .2s; display:flex; flex-direction:column; align-items:center; gap:.3rem; }
+    .option-btn:hover { background:var(--egg-yellow); border-color:var(--kinder-red); transform:scale(1.05); }
+    .option-btn.correct { background:#d4edda; border-color:#28a745; animation:correctBounce .4s ease; }
+    .option-btn.wrong { background:#f8d7da; border-color:#dc3545; animation:shake .4s ease; }
+    @keyframes correctBounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+    .option-emoji { font-size:1.5rem; }
+    .progress-bar { height:6px; background:#eee; border-radius:99px; margin-bottom:1.5rem; overflow:hidden; }
+    .progress-fill { height:100%; background:linear-gradient(90deg,var(--kinder-red),var(--pink)); border-radius:99px; transition:width .5s ease; }
+    .feedback-msg { margin-top:1rem; font-size:1rem; font-weight:700; min-height:1.5rem; color:var(--kinder-brown); }
+
+    /* WISH SCREEN */
+    #screen-wish { background:linear-gradient(135deg,#1a0a2e 0%,#4a1060 50%,#8b1a8a 100%); overflow:hidden; }
+    .stars-bg { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+    .star { position:absolute; background:white; border-radius:50%; animation:twinkle linear infinite; }
+    @keyframes twinkle { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.2;transform:scale(.5)} }
+    .wish-inner { position:relative; z-index:2; max-width:620px; width:100%; }
+    .crown { font-size:4rem; animation:crownBounce 1s ease-in-out infinite alternate; }
+    @keyframes crownBounce { from{transform:translateY(0) rotate(-5deg)} to{transform:translateY(-10px) rotate(5deg)} }
+    .wish-name { font-family:'Pacifico',cursive; font-size:clamp(2.5rem,8vw,4.5rem); color:var(--egg-yellow); text-shadow:0 0 30px rgba(255,215,0,.8),3px 3px 0 rgba(0,0,0,.3); margin:.5rem 0; animation:nameGlow 2s ease-in-out infinite alternate; }
+    @keyframes nameGlow { from{text-shadow:0 0 20px rgba(255,215,0,.6)} to{text-shadow:0 0 50px rgba(255,215,0,1),0 0 80px rgba(255,150,0,.5)} }
+    .wish-subtitle { font-size:clamp(1rem,3vw,1.4rem); color:#ffd6f0; font-weight:700; margin-bottom:1.5rem; }
+
+    /* PHOTO SLIDESHOW */
+    .slideshow-wrap { position:relative; width:280px; margin:0 auto 1.2rem; }
+    .photo-frame { width:280px; height:310px; border-radius:20px; overflow:hidden; border:6px solid var(--egg-yellow); box-shadow:0 0 40px rgba(255,215,0,.5),0 12px 40px rgba(0,0,0,.4); position:relative; background:#111; }
+    .photo-slide { position:absolute; inset:0; transition:opacity .9s ease,transform .9s ease; opacity:0; transform:scale(1.04); }
+    .photo-slide.active { opacity:1; transform:scale(1); }
+
+    /* Each slide has an <img> that fills it */
+    .photo-slide img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* Fallback shown when no real image – hidden once you add real photos */
+    .photo-fallback { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:1rem; font-weight:800; color:rgba(255,255,255,.9); text-shadow:1px 1px 2px rgba(0,0,0,.4); padding:1rem; }
+    .photo-fallback span { font-size:4.5rem; margin-bottom:.5rem; }
+
+    .slide-dots { display:flex; gap:8px; justify-content:center; margin-top:.8rem; }
+    .dot { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.3); transition:background .3s,transform .3s; cursor:pointer; }
+    .dot.active { background:var(--egg-yellow); transform:scale(1.3); }
+
+    /* KINDER MINI EGGS */
+    .kinder-section { margin:1.5rem 0; display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; }
+    .kinder-egg-mini { width:60px; height:70px; background:linear-gradient(160deg,#fff8e1 0%,#ffe082 50%,#ffca28 100%); border-radius:50% 50% 50% 50%/60% 60% 40% 40%; display:flex; align-items:center; justify-content:center; font-size:1.8rem; position:relative; box-shadow:0 4px 15px rgba(0,0,0,.2); animation:eggBob 2s ease-in-out infinite; cursor:pointer; }
+    .kinder-egg-mini:nth-child(2){animation-delay:.3s} .kinder-egg-mini:nth-child(3){animation-delay:.6s}
+    .kinder-band-mini { position:absolute; top:50%; left:0; right:0; height:14px; background:var(--kinder-red); transform:translateY(-50%); display:flex; align-items:center; justify-content:center; color:white; font-family:'Pacifico',cursive; font-size:.35rem; letter-spacing:1px; }
+
+    /* MESSAGE CARD */
+    .message-card { background:rgba(255,255,255,.12); border:2px solid rgba(255,215,0,.3); border-radius:20px; padding:1.5rem; margin:1rem 0; backdrop-filter:blur(10px); }
+    .message-card p { color:white; font-size:1rem; font-weight:600; line-height:1.8; }
+    .message-card .hl { color:var(--egg-yellow); font-weight:900; }
+
+    /* BALLOONS */
+    .balloon-row { display:flex; justify-content:center; gap:.5rem; margin:1rem 0; }
+    .balloon { font-size:2.5rem; animation:balloonDrift 3s ease-in-out infinite; }
+    .balloon:nth-child(2){animation-delay:.4s} .balloon:nth-child(3){animation-delay:.8s} .balloon:nth-child(4){animation-delay:1.2s} .balloon:nth-child(5){animation-delay:1.6s}
+    @keyframes balloonDrift { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-15px) rotate(3deg)} }
+
+    /* FLOATING HEARTS */
+    .heart-float { position:fixed; pointer-events:none; font-size:1.5rem; animation:heartRise 3s ease forwards; z-index:1000; }
+    @keyframes heartRise { 0%{transform:translateY(0) scale(1);opacity:1} 100%{transform:translateY(-200px) scale(.3);opacity:0} }
+
+    /* CTA BUTTON */
+    .cta-btn { display:inline-block; background:linear-gradient(135deg,var(--kinder-red),#ff6b35); color:white; font-family:'Nunito',sans-serif; font-size:1.2rem; font-weight:900; padding:1rem 2.5rem; border-radius:50px; border:none; cursor:pointer; box-shadow:0 8px 24px rgba(232,38,58,.4); transition:all .2s; margin-top:1rem; }
+    .cta-btn:hover { transform:translateY(-3px) scale(1.03); }
+    .cta-btn:active { transform:scale(.97); }
+
+    @media(max-width:480px){
+      .quiz-options{grid-template-columns:1fr 1fr}
+      .option-btn{padding:.7rem .5rem;font-size:.85rem}
+      .photo-frame{width:240px;height:270px}
+      .slideshow-wrap{width:240px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="confetti-container" id="confetti"></div>
+
+<!-- ╔══════════════════════════════════════╗
+     ║  SCREEN 1 — KINDER EGG INTRO        ║
+     ╚══════════════════════════════════════╝ -->
+<div id="screen-intro" class="screen active">
+  <div class="intro-title">Hey there! 👋</div>
+  <div class="intro-sub">Someone very special sent you this 🎁</div>
+
+  <div class="egg-wrapper" onclick="crackEgg()">
+    <div class="egg" id="mainEgg">
+      🥚
+      <div class="kinder-band">Kinder Joy</div>
+    </div>
+  </div>
+  <div class="tap-hint">👆 Tap the egg to begin!</div>
+
+  <div style="margin-top:2rem;font-size:1.1rem;color:rgba(255,255,255,.85);font-weight:700;">
+    This page has a surprise for <span style="color:#FFD700;">Gowravi Shetty 🌟</span>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════╗
+     ║  SCREEN 2 — INTERACTIVE QUIZ        ║
+     ╚══════════════════════════════════════╝ -->
+<div id="screen-quiz" class="screen">
+  <h2 style="font-family:'Pacifico',cursive;color:var(--kinder-red);font-size:1.8rem;margin-bottom:.5rem;">Let's see how well you know yourself! 😏</h2>
+  <p style="color:#666;font-weight:600;margin-bottom:1.5rem;">Answer 4 fun questions, Shettyyyyyyyy! 🎯</p>
+  <div class="quiz-card">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="quiz-header" id="quizHeader">Question 1 / 4</div>
+    <div class="quiz-emoji" id="quizEmoji">🍫</div>
+    <div class="quiz-question" id="quizQuestion">Loading…</div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="feedback-msg" id="feedbackMsg"></div>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════╗
+     ║  SCREEN 3 — BIRTHDAY WISH           ║
+     ╚══════════════════════════════════════╝ -->
+<div id="screen-wish" class="screen">
+  <div class="stars-bg" id="starsBg"></div>
+  <div class="wish-inner">
+
+    <div class="crown">👑</div>
+    <div style="color:white;font-size:1.2rem;font-weight:700;margin-bottom:.3rem;">Happy Birthday</div>
+    <div class="wish-name">Gowravi Shetty!✨</div>
+    <div class="wish-subtitle">Shettyyyyyyyy💕From Gedde</div>
+
+    <div class="balloon-row">
+      <span class="balloon">🎈</span><span class="balloon">🎊</span>
+      <span class="balloon">🎂</span><span class="balloon">🎊</span>
+      <span class="balloon">🎈</span>
+    </div>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         PHOTO SLIDESHOW — 5 SLOTS BELOW
+         How to add a photo:
+           1. Save your image file in the SAME folder as index.html
+              (e.g. photo1.jpg, photo2.jpg …)
+           2. Inside each <div class="photo-slide"> replace the
+              <div class="photo-fallback"> block with:
+              <img src="photo1.jpg" alt="Gowravi" />
+         Supported formats: .jpg  .jpeg  .png  .webp  .gif
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="slideshow-wrap">
+      <div class="photo-frame">
+
+        <!-- ┌─────────────────────────────────────────┐
+             │  PHOTO SLOT 1  ← replace with:         │
+             │  <img src="photo1.jpg" alt="Gowravi"/>  │
+             └─────────────────────────────────────────┘ -->
+        <div class="photo-slide" id="slide-3">
+    <img src="C:\Users\manoj\OneDrive\Desktop\shettyyyyyy\image\image1.jpeg"
+         style="width:100%;
+                height:100%;
+                object-fit:cover;
+                object-position:center top;
+                display:block;">
+</div>
+
+        <!-- ┌─────────────────────────────────────────┐
+             │  PHOTO SLOT 2  ← replace with:         │
+             │  <img src="photo2.jpg" alt="Gowravi"/>  │
+             └─────────────────────────────────────────┘ -->
+        <div class="photo-slide" id="slide-1">
+          <div class="photo-fallback" style="background:linear-gradient(135deg,#A18CD1,#FBC2EB);">
+            <span><img src="C:\Users\manoj\OneDrive\Desktop\shettyyyyyy\image\image3.jpeg" style="width:100%;height:110%;object-fit:cover;object-position:center;" /></span>
+          </div>
+        </div>
+
+        <!-- ┌─────────────────────────────────────────┐
+             │  PHOTO SLOT 3  ← replace with:         │
+             │  <img src="photo3.jpg" alt="Gowravi"/>  │
+             └─────────────────────────────────────────┘ -->
+        <div class="photo-slide" id="slide-3">
+    <img src="C:\Users\manoj\OneDrive\Desktop\shettyyyyyy\image\image7.jpeg"
+         style="width:100%;
+                height:100%;
+                object-fit:cover;
+                object-position:center;
+                display:block;">
+</div>
+
+        <!-- ┌─────────────────────────────────────────┐
+             │  PHOTO SLOT 4  ← replace with:         │
+             │  <img src="photo4.jpg" alt="Gowravi"/>  │
+             └─────────────────────────────────────────┘ -->
+        <div class="photo-slide" id="slide-3">
+          <div class="photo-fallback" style="background:linear-gradient(135deg,#FCCB90,#D57EEB);">
+            <span><img src="C:\Users\manoj\OneDrive\Desktop\shettyyyyyy\image\image6.jpeg" style="width:100%;height:110%;object-fit:cover;object-position:center;" /></span>
+          </div>
+        </div>
+
+        <!-- ┌─────────────────────────────────────────┐
+             │  PHOTO SLOT 5  ← replace with:         │
+             │  <img src="photo5.jpg" alt="Gowravi"/>  │
+             └─────────────────────────────────────────┘ -->
+        <div class="photo-slide" id="slide-3">
+    <img src="C:\Users\manoj\OneDrive\Desktop\shettyyyyyy\image\image4.jpeg"
+         style="width:100%;
+                height:100%;
+                object-fit:cover;
+                object-position:center top;
+                display:block;">
+</div>
+
+      </div><!-- /photo-frame -->
+      <div class="slide-dots" id="slideDots"></div>
+    </div><!-- /slideshow-wrap -->
+
+    <!-- KINDER JOY EGGS -->
+    <div class="kinder-section">
+      <div class="kinder-egg-mini" onclick="popHeart(event)">🍫<div class="kinder-band-mini">Kinder</div></div>
+      <div class="kinder-egg-mini" onclick="popHeart(event)">🧸<div class="kinder-band-mini">Kinder</div></div>
+      <div class="kinder-egg-mini" onclick="popHeart(event)">🎁<div class="kinder-band-mini">Kinder</div></div>
+    </div>
+    <p style="color:rgba(255,255,255,.7);font-size:.85rem;margin-bottom:1rem;">👆 Tap the Kinder eggs!</p>
+
+    <!-- BIRTHDAY MESSAGE -->
+    <div class="message-card">
+      <p>
+        Hey <span class="hl">Shettyyyyyyyy</span>! 🥳<br><br>
+        I wish I could be there with you today, but know that you are
+        <span class="hl">celebrated from miles away</span> with so much love 💖<br><br>
+        You deserve every <span class="hl">Kinder Joy</span> in the world 🍫,
+        every balloon 🎈, every candle on your cake 🕯️ and a thousand more surprises!💕<br><br>
+        May this year bring you <span class="hl">endless happiness, laughter, and good food</span> 😄✨<br><br>
+        <strong style="color:var(--egg-yellow);">Happy Birthday, my dearest Gowravi!👑 shettyyyyyyyy💖 </strong>
+      </p>
+    </div>
+
+    <div style="font-size:2rem;margin:1rem 0;letter-spacing:4px;">🎂🎉🎁🌸💛🍫👑🎈✨💖</div>
+
+    <button class="cta-btn" onclick="restartGame()">🔄 Play Again!</button>
+
+  </div><!-- /wish-inner -->
+</div>
+
+
+<script>
+  /* CONFETTI */
+  (function(){
+    const c=document.getElementById('confetti');
+    const colors=['#FFD700','#FF6EB4','#C9A0E8','#E8263A','#87CEEB','#84FAB0'];
+    for(let i=0;i<60;i++){
+      const el=document.createElement('div');
+      el.className='confetti';
+      el.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*-20}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'3px'};animation-duration:${3+Math.random()*5}s;animation-delay:${Math.random()*5}s;`;
+      c.appendChild(el);
+    }
+  })();
+
+  /* STARS */
+  function makeStars(){
+    const sb=document.getElementById('starsBg');
+    if(sb.childElementCount>0)return;
+    for(let i=0;i<80;i++){
+      const s=document.createElement('div');
+      s.className='star';
+      const sz=1+Math.random()*3;
+      s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;animation-duration:${1+Math.random()*3}s;animation-delay:${Math.random()*3}s;`;
+      sb.appendChild(s);
+    }
+  }
+
+  /* SCREEN NAV */
+  function showScreen(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+    if(id==='screen-wish'){makeStars();startSlideshow();}
+  }
+
+  /* EGG CRACK */
+  function crackEgg(){
+    const egg=document.getElementById('mainEgg');
+    egg.style.transform='scale(1.3) rotate(10deg)';
+    egg.innerHTML='🎉<div class="kinder-band">Kinder Joy</div>';
+    loadQuestion(0);
+    setTimeout(()=>showScreen('screen-quiz'),600);
+  }
+
+  /* QUIZ */
+  const questions=[
+    {emoji:'🍫',q:"What's your absolute favourite thing in the world?",
+     options:[{e:'🍫',t:'Kinder Joy',ok:true},{e:'🍕',t:'Pizza',ok:false},{e:'☕',t:'Coffee',ok:false},{e:'🎮',t:'Gaming',ok:false}],
+     fb:['Yesss!! We all knew it 😍🍫','Hmm… are you sure?? 🤔','That too, but really?? 😄','Nice try! 😂']},
+    {emoji:'🎂',q:'How many candles should be on your birthday cake today?',
+     options:[{e:'👶',t:"I'm still a baby!",ok:true},{e:'🎂',t:'Exactly the right number',ok:false},{e:'💯',t:"100+ I'm ancient",ok:false},{e:'🤫',t:"That's a secret!",ok:false}],
+     fb:['Aww not quite! 😄','Exactly right!! 👶🎉',"You'll never be old to us! 😂",'Haha no secrets today! 🎊']},
+    {emoji:'🌸',q:'What makes Gowravi Shetty truly special?',
+     options:[{e:'💛',t:'Her golden heart',ok:true},{e:'😂',t:'Her contagious laugh',ok:false},{e:'🌟',t:'Her awesomeness',ok:false},{e:'🤷',t:'Everything!',ok:false}],
+     fb:['100% TRUE!! 💛✨','That laugh tho!! 😂💕','Absolutely!! 🌟','Also correct!! 🎊']},
+    {emoji:'🎁',q:"What's the best birthday gift for Shettyyyyyyyy?",
+     options:[{e:'🍫',t:'A bucket of Kinder Joys',ok:false},{e:'💸',t:'Money',ok:false},{e:'👗',t:'New clothes',ok:false},{e:'🧸',t:'A Panda',ok:true}],
+     fb:['OBVIOUSLY!! 🧸👑✨','Fair enough! 😄','Always a good choice! 💃','So cute!! 🧸💕']}
+  ];
+  let curQ=0,score=0;
+
+  function loadQuestion(idx){
+    if(idx>=questions.length){showScreen('screen-wish');return;}
+    const q=questions[idx];
+    document.getElementById('quizHeader').textContent=`Question ${idx+1} / ${questions.length}`;
+    document.getElementById('quizEmoji').textContent=q.emoji;
+    document.getElementById('quizQuestion').textContent=q.q;
+    document.getElementById('progressFill').style.width=`${(idx/questions.length)*100}%`;
+    document.getElementById('feedbackMsg').textContent='';
+    const opts=document.getElementById('quizOptions');
+    opts.innerHTML='';
+    q.options.forEach((opt,i)=>{
+      const btn=document.createElement('button');
+      btn.className='option-btn';
+      btn.innerHTML=`<span class="option-emoji">${opt.e}</span>${opt.t}`;
+      btn.onclick=()=>{
+        document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+        if(opt.ok){btn.classList.add('correct');score++;document.getElementById('feedbackMsg').textContent='✅ '+q.fb[i];}
+        else{btn.classList.add('wrong');document.getElementById('feedbackMsg').textContent='❌ '+q.fb[i];document.querySelectorAll('.option-btn').forEach((b,j)=>{if(q.options[j].ok)b.classList.add('correct');});}
+        curQ++;setTimeout(()=>loadQuestion(curQ),1600);
+      };
+      opts.appendChild(btn);
+    });
+  }
+
+  /* SLIDESHOW */
+  let slideIdx=0,slideTimer;
+  function startSlideshow(){
+    const slides=document.querySelectorAll('.photo-slide');
+    const dotsEl=document.getElementById('slideDots');
+    dotsEl.innerHTML='';
+    slides.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>goSlide(i);dotsEl.appendChild(d);});
+    clearInterval(slideTimer);
+    slideTimer=setInterval(()=>goSlide((slideIdx+1)%slides.length),3000);
+  }
+  function goSlide(idx){
+    document.querySelectorAll('.photo-slide').forEach((s,i)=>s.classList.toggle('active',i===idx));
+    document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+    slideIdx=idx;
+  }
+
+  /* HEART POP */
+  function popHeart(e){
+    ['💖','💛','🍫','✨','🎉','🌸','💕','🥰'].slice(0,6).forEach((_,i)=>{
+      const h=document.createElement('div');
+      h.className='heart-float';
+      h.textContent=['💖','💛','🍫','✨','🎉','🌸'][i];
+      h.style.left=(e.clientX-20+Math.random()*40-20)+'px';
+      h.style.top=(e.clientY-20)+'px';
+      h.style.animationDelay=(Math.random()*.4)+'s';
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),3000);
+    });
+  }
+
+  /* RESTART */
+  function restartGame(){curQ=0;score=0;loadQuestion(0);showScreen('screen-quiz');}
+</script>
+</body>
+</html>
